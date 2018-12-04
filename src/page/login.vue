@@ -1,6 +1,7 @@
 <template>
   <div class="login-page-container">
-    <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
+    <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px"
+             class="demo-ruleForm login-container">
       <h3 class="title">系统登录</h3>
       <el-form-item prop="account">
         <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="账号"></el-input>
@@ -17,9 +18,10 @@
 </template>
 
 <script>
+  import axios from 'axios';
+
   export default {
-    props: {
-    },
+    props: {},
     data() {
       return {
         logining: false,
@@ -52,20 +54,25 @@
         _this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
             _this.logining = true;
-            var loginParams = {
-              username: this.ruleForm2.account,
-              password: this.ruleForm2.checkPass
-            };
-            if (loginParams.username == "admin" && loginParams.password == "123456") {
-              _this.logining = false;
-              sessionStorage.setItem('user', JSON.stringify(loginParams));
-              _this.$router.push({ path: '/menutab' });
-            } else {
-              _this.logining = false;
-              _this.$alert('用户名或密码错误！', '提示信息', {
-                confirmButtonText: '确定'
-              });
-            }
+            let urlHost = 'http://admin.liyunbiao.com/login';
+            var params = new URLSearchParams();
+            params.append('mobile', this.ruleForm2.account);
+            params.append('pwd', this.ruleForm2.checkPass);
+            axios.post(urlHost, params)
+              .then((res) => {
+                if (res.data.code === 0) {
+                  _this.logining = false;
+                  sessionStorage.setItem('user', JSON.stringify(loginParams));
+                  _this.$router.push({path: '/menutab'});
+                } else {
+                  _this.logining = false;
+                  _this.$alert('用户名或密码错误！', '提示信息', {
+                    confirmButtonText: '确定'
+                  });
+                }
+              }).catch(error => {
+              alert(error.toString());
+            });
           } else {
             console.log('error submit!!');
             return false;
