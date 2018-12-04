@@ -19,6 +19,7 @@
 
 <script>
   import axios from 'axios';
+  import qs from 'qs';
 
   export default {
     props: {},
@@ -26,8 +27,8 @@
       return {
         logining: false,
         ruleForm2: {
-          account: 'admin',
-          checkPass: '123456'
+          account: '',
+          checkPass: ''
         },
         rules2: {
           account: [{
@@ -54,24 +55,27 @@
         _this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
             _this.logining = true;
-            let urlHost = 'http://admin.liyunbiao.com/login';
-            var params = new URLSearchParams();
-            params.append('mobile', this.ruleForm2.account);
-            params.append('pwd', this.ruleForm2.checkPass);
-            axios.post(urlHost, params)
-              .then((res) => {
-                if (res.data.code === 0) {
-                  _this.logining = false;
-                  sessionStorage.setItem('user', JSON.stringify(loginParams));
-                  _this.$router.push({path: '/menutab'});
-                } else {
-                  _this.logining = false;
-                  _this.$alert('用户名或密码错误！', '提示信息', {
-                    confirmButtonText: '确定'
-                  });
-                }
-              }).catch(error => {
-              alert(error.toString());
+            var loginParams = {
+              username: this.ruleForm2.account,
+              password: this.ruleForm2.checkPass
+            };
+            axios.post('/login',
+              qs.stringify({
+                mobile: this.ruleForm2.account,
+                pwd: this.ruleForm2.checkPass,
+              })).then(function (response) {
+              if (response.data.code === 0) {
+                _this.logining = false;
+                sessionStorage.setItem('user', JSON.stringify(loginParams));
+                _this.$router.push({path: '/menutab'});
+              } else {
+                _this.logining = false;
+                _this.$alert(response.data.msg, '提示信息', {
+                  confirmButtonText: '确定'
+                });
+              }
+            }).catch(function (error) {
+              console.log(error);
             });
           } else {
             console.log('error submit!!');

@@ -4,7 +4,12 @@ import 'element-ui/lib/theme-chalk/index.css';
 import Router from 'vue-router';
 import App from './App.vue';
 import 'font-awesome/css/font-awesome.min.css'
+import axios from "axios"
+// 引入路由
+import router from "./router.js"
 
+//配置全局的axios默认值
+axios.defaults.baseURL = 'http://admin.liyunbiao.com';
 
 Vue.use(ElementUI);
 Vue.use(Router);
@@ -23,8 +28,7 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-// 引入路由
-import router from "./router.js"
+
 new Vue({
   el: '#app',
   router, // 注入到根实例中
