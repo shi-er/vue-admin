@@ -11,12 +11,13 @@ import menutable from './page/menu2/menuTable.vue'
 // 要告诉 vue 使用 vueRouter
 Vue.use(VueRouter);
 
-let routes = [{
-  path: '/login',
-  component: login,
-  name: '',
-  hidden: true
-},
+let routes = [
+  {
+    path: '/login',
+    component: login,
+    name: '',
+    hidden: true
+  },
   {
     path: '/404',
     component: notFound,
